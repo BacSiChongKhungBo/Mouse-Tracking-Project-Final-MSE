@@ -7,6 +7,7 @@ import json
 views = Blueprint('views', __name__)
 
 
+
 @views.route('/', methods=['GET', 'POST'])
 @login_required
 def home():
@@ -35,3 +36,7 @@ def delete_note():
             db.session.commit()
 
     return jsonify({})
+
+@views.route('/mousetrack', methods=['GET', 'POST'])
+def mousetrack():
+    return render_template("mousetrack.html", user=current_user)

@@ -14,8 +14,15 @@
       href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
       crossorigin="anonymous"
     />
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.2/socket.io.min.js"></script>
     <title>{% block title %}Home{% endblock %}</title>
+    <style>
+      #mouse-position {
+          padding: 10px;
+          border: 1px solid #ccc;
+          border-radius: 5px;
+      }
+  </style>
   </head>
   <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -32,14 +39,44 @@
           {% if user.is_authenticated %}
           <a class="nav-item nav-link" id="home" href="/">Home</a>
           <a class="nav-item nav-link" id="logout" href="/logout">Logout</a>
+          <a class="nav-item nav-link" id="mousetrack" href="/mousetrack">mousetrack</a>
           {% else %}
           <a class="nav-item nav-link" id="login" href="/login">Login</a>
           <a class="nav-item nav-link" id="signUp" href="/sign-up">Sign Up</a>
+          <a class="nav-item nav-link" id="mousetrack" href="/mousetrack">mousetrack</a>
           {% endif %}
         </div>
       </div>
     </nav>
-
+    <h1>Mousetrack</h1>
+    <p id="mouse-coordinates">Waiting for mouse event</p>
+    <script>
+      
+      const socket = io.connect('http://' + document.domain + ':' + location.port);
+      document.addEventListener('mousemove', function(event){
+        const x = event.clientX;
+        const y = event.clientY;
+        const coordinates = {x, y}
+        socket.emit('mouse_event', coordinates)
+        document.getElementById('mouse-coordinates').innerText = `${coordinates.x}, ${coordinates.y}`;
+      });
+      document.addEventListener('click', function(event) {
+        const x = event.clientX;
+        const y = event.clientY;
+        const button = event.button;
+        const clickCoordinates = {x, y, button}
+        socket.emit('mouse_event', clickCoordinates)
+        document.getElementById('mouse-coordinates').innerText = `${clickCoordinates.x}, ${clickCoordinates.y}, ${clickCoordinates.button}`;
+      });
+      document.getElementById('submitbutton').addEventListener('click', function(event){
+        const x = event.clientX;
+        const y = event.clientY;
+        const button = event.button;
+        const clickbuttonCoordinates = {x, y, button}
+        socket.emit('mouse_event', clickCoordinates)
+        document.getElementById('mouse-coordinates').innerText = `${clickbuttonCoordinates.x}, ${clickbuttonCoordinates.y}, ${clickbuttonCoordinates.button}`;
+      });
+    </script>
     {% with messages = get_flashed_messages(with_categories=true) %} {% if
     messages %} {% for category, message in messages %} {% if category ==
     'error' %}

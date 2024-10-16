@@ -1,0 +1,15 @@
+{% extends "base.html" %} {% block title %}Mousetrack{% endblock %} {% block content %}
+
+<div id="mouse-position">Mouse Position: (0, 0)</div>
+
+<script>
+    const mousePositionDisplay = document.getElementById('mouse-position');
+
+    document.addEventListener('mousemove', (event) => {
+        const x = event.clientX;
+        const y = event.clientY;
+        mousePositionDisplay.textContent = `Mouse Position: (${x}, ${y})`;
+    });
+</script>
+
+{% endblock %}
