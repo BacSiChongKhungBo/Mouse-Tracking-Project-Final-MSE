@@ -4,7 +4,7 @@ from pyspark.sql.types import StructType, StructField, StringType, IntegerType
 
 # Initialize Spark session
 spark = SparkSession.builder \
-    .appName("KafkaMouseEventStreaming") \
+    .appName("KafkaMouseEventStreamingToHDFS") \
     .getOrCreate()
 
 # Set the log level
@@ -34,8 +34,8 @@ parsed_df = df.selectExpr("CAST(value AS STRING) AS json") \
 query = parsed_df.writeStream \
     .outputMode("append") \
     .format("json") \
-    .option("path", "hdfs://localhost:9000/user/mousedata1") \
-    .option("checkpointLocation", "hdfs://localhost:9000/user/mousedata1") \
+    .option("path", "hdfs://localhost:9000/user/son/mousedata2") \
+    .option("checkpointLocation", "hdfs://localhost:9000/user/son/mousedata2") \
     .start()
 
 # Await termination
