@@ -54,27 +54,27 @@
       
       const socket = io.connect('http://' + document.domain + ':' + location.port);
       document.addEventListener('mousemove', function(event){
-        const x = event.clientX;
-        const y = event.clientY;
+        const x = event.pageX;
+        const y = event.pageY;
         const coordinates = {x, y}
         socket.emit('mouse_event', coordinates)
         document.getElementById('mouse-coordinates').innerText = `${coordinates.x}, ${coordinates.y}`;
       });
       document.addEventListener('click', function(event) {
-        const x = event.clientX;
-        const y = event.clientY;
-        const button = event.button;
-        const clickCoordinates = {x, y, button}
+        const x = event.pageX;
+        const y = event.pageY;
+        const clicked = event.button;
+        const clickCoordinates = {x, y, clicked}
         socket.emit('mouse_event', clickCoordinates)
-        document.getElementById('mouse-coordinates').innerText = `${clickCoordinates.x}, ${clickCoordinates.y}, ${clickCoordinates.button}`;
+        document.getElementById('mouse-coordinates').innerText = `${clickCoordinates.x}, ${clickCoordinates.y}, ${clickCoordinates.clicked}`;
       });
       document.getElementById('submitbutton').addEventListener('click', function(event){
-        const x = event.clientX;
-        const y = event.clientY;
-        const button = event.button;
-        const clickbuttonCoordinates = {x, y, button}
+        const x = event.pageX;
+        const y = event.pageY;
+        const clicked = event.button;
+        const clickbuttonCoordinates = {x, y, clicked}
         socket.emit('mouse_event', clickCoordinates)
-        document.getElementById('mouse-coordinates').innerText = `${clickbuttonCoordinates.x}, ${clickbuttonCoordinates.y}, ${clickbuttonCoordinates.button}`;
+        document.getElementById('mouse-coordinates').innerText = `${clickbuttonCoordinates.x}, ${clickbuttonCoordinates.y}, ${clickbuttonCoordinates.clicked}`;
       });
     </script>
     {% with messages = get_flashed_messages(with_categories=true) %} {% if

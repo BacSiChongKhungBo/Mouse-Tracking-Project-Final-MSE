@@ -14,14 +14,14 @@ spark.sparkContext.setLogLevel("WARN")
 schema = StructType([
     StructField("x", IntegerType(), True),
     StructField("y", IntegerType(), True),
-    StructField("button", StringType(), True)
+    StructField("clicked", StringType(), True)
 ])
 
 # Create a DataFrame representing the stream of input lines from Kafka
 df = spark.readStream \
     .format("kafka") \
     .option("kafka.bootstrap.servers", "localhost:9092") \
-    .option("subscribe", "mouse_events_topic") \
+    .option("subscribe", "mousedataevent") \
     .option("startingOffsets", "earliest") \
     .load()
 
@@ -34,8 +34,8 @@ parsed_df = df.selectExpr("CAST(value AS STRING) AS json") \
 query = parsed_df.writeStream \
     .outputMode("append") \
     .format("json") \
-    .option("path", "hdfs://localhost:9000/user/son/mousedata2") \
-    .option("checkpointLocation", "hdfs://localhost:9000/user/son/mousedata2") \
+    .option("path", "hdfs://localhost:9000/user/son/mousedata66") \
+    .option("checkpointLocation", "hdfs://localhost:9000/user/son/mousedata66") \
     .start()
 
 # Await termination

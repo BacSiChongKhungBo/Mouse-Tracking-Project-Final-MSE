@@ -16,7 +16,7 @@ socketIO = SocketIO(app)
 #log.setLevel(logging.FATAL)
 
 producer = KafkaProducer(
-    bootstrap_servers='localhost:9092',  # Update with your Kafka broker address
+    bootstrap_servers='localhost:9092',
     value_serializer=lambda v: json.dumps(v).encode('utf-8')
 )
 
@@ -25,10 +25,10 @@ def handle_mouse_event(data):
     structured_data = {
         'x': data.get('x'),
         'y': data.get('y'),
-        'button': data.get('button')
+        'clicked': data.get('clicked')
     }
     print(f'{data}')
-    producer.send('mouse_events_topic', value=structured_data)
+    producer.send('mousedataevent', value=structured_data)
     producer.flush() 
 
 if __name__ == '__main__':

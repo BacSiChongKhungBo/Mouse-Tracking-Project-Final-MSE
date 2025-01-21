@@ -3,7 +3,6 @@ from pyspark.sql.functions import from_json, col
 from pyspark.sql.types import StructType, StructField, StringType, IntegerType
 import matplotlib.pyplot as plt
 import pandas as pd
-import time
 
 # Initialize Spark session (if not already done)
 spark = SparkSession.builder \
@@ -25,29 +24,33 @@ def plot_realtime_coordinates():
     schema = StructType([
         StructField("x", IntegerType(), True),
         StructField("y", IntegerType(), True),
-        StructField("button", StringType(), True)
+        StructField("clicked", StringType(), True)
     ])
-
-    # Create a streaming DataFrame to read from Kafka
-    df = spark.readStream \
-        .format("kafka") \
-        .option("kafka.bootstrap.servers", "localhost:9092") \
-        .option("subscribe", "mouse_events_topic") \
-        .option("startingOffsets", "earliest") \
-        .load()
+    hdfs_path = "hdfs://localhost:9000/user/son/mousedata8"
+    df = spark.read.json(hdfs_path, schema=schema)  # Read the JSON data with schema
 
     # Define processing of the stream
-    processed_df = df.selectExpr("CAST(value AS STRING) AS json") \
-        .select(from_json(col("json"), schema).alias("data")) \
-        .select("data.*") \
-        .filter(col("x").isNotNull() & col("y").isNotNull())
+    processed_df = df.filter(col("x").isNotNull() & col("y").isNotNull())
+    # Create a streaming DataFrame to read from Kafka
+    #df = spark.readStream \
+    #    .format("kafka") \
+     ##   .option("kafka.bootstrap.servers", "localhost:9092") \
+     #   .option("subscribe", "mousedataevent") \
+     #   .option("startingOffsets", "latest") \
+     #   .load()
+
+    # Define processing of the stream
+    #processed_df = df.selectExpr("CAST(value AS STRING) AS json") \
+       # .select(from_json(col("json"), schema).alias("data")) \
+      #  .select("data.*") \
+       # .filter(col("x").isNotNull() & col("y").isNotNull())
 
     # Function to update the plot
     def update_plot(new_data):
         nonlocal x_data, y_data, clicked_x_data, clicked_y_data
 
         if not new_data.empty:
-            clicked_data = new_data[new_data['button'] == '0']
+            clicked_data = new_data[new_data['clicked'] == '0']
 
             # Append new data to the lists
             x_data.extend(new_data['x'].tolist())
@@ -56,7 +59,6 @@ def plot_realtime_coordinates():
             clicked_y_data.extend(clicked_data['y'].tolist())
 
             plt.clf()  # Clear the current figure
-
             # Plot the data as a line plot
             plt.plot(x_data, y_data, color='skyblue', linewidth=0.5)  # Line plot
             plt.scatter(clicked_x_data, clicked_y_data, color='r', s=10)

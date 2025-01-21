@@ -6,8 +6,8 @@
     const mousePositionDisplay = document.getElementById('mouse-position');
 
     document.addEventListener('mousemove', (event) => {
-        const x = event.clientX;
-        const y = event.clientY;
+        const x = event.pageX;
+        const y = event.pageY;
         mousePositionDisplay.textContent = `Mouse Position: (${x}, ${y})`;
     });
 </script>
